@@ -2,7 +2,7 @@ import argparse
 
 def arg_parser():
     parser = argparse.ArgumentParser(description="parser for style-transfer")
-    subparsers = main_arg_parser.add_subparsers(title='subcommands', dest='subcommand')
+    subparsers = parser.add_subparsers(title='subcommands', dest='subcommand')
 
     train_arg_parser = subparsers.add_parser("train", help="parser for training arguments")
     train_arg_parser.add_argument("--epochs", type=int, default=2,
