@@ -2,22 +2,28 @@ import os
 import sys
 import torch
 from PIL import Image
-from src.exceptions import CustomException
-from src.logger import logging
+from exceptions import CustomException
+from logger import logging
 
-def check_model_exist(save_path: str) -> bool:
-    '''
-    check if the model file exists or not
-    '''
+def check_paths(args):
     try:
-        if os.path.isfile(save_path):
+        if not os.path.exists(args.save_model_dir):
+            os.makedirs(args.save_model_dir)
+        if args.checkpoint_model_dir is not None and not(os.path.exists(args.checkpoint_model_dir)):
+            os.makedirs(args.checkpoint_model_dir)
+    except Exception as e:
+        logging.exception(e)
+        raise CustomException(e,sys)
+
+def check_model_exists(model_path: str)-> bool:
+    try:
+        if os.path.isfile(model_path):
             return True
         else:
             return False
     except Exception as e:
         logging.exception(e)
         raise CustomException(e,sys)
-
 
 def load_image(filename, size = None, scale = None):
     '''
