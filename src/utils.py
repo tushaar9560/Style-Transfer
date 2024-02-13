@@ -2,8 +2,8 @@ import os
 import sys
 import torch
 from PIL import Image
-from exceptions import CustomException
-from logger import logging
+from src.exception import CustomException
+from src.logger import logging
 
 def check_paths(args):
     try:
@@ -32,9 +32,9 @@ def load_image(filename, size = None, scale = None):
     try:
         img = Image.open(filename)
         if size is not None:
-            img = img.resize((size, size), Image.ANTIAlIAS)
+            img = img.resize((size, size), 'ANTIALIAS')
         elif scale is not None:
-            img = img.resize((int(img.size[0] / scale), int(img.size[1] / scale)), Image.ANTIALIAS)
+            img = img.resize((int(img.size[0] / scale), int(img.size[1] / scale)), 'ANTIALIAS')
         return img
     except Exception as e:
         logging.exception(e)

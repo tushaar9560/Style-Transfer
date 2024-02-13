@@ -1,6 +1,6 @@
 import torch
 from torchvision import transforms
-from utils import save_image, check_model_exists
+from utils import save_image, check_model_exists, load_image
 import os
 import sys
 import onnx
@@ -9,40 +9,67 @@ import re
 from logger import logging
 from exception import CustomException
 from components.transformer_net import TransformerNet
+import streamlit as st
 
 class StyleTransfer:
     def __init__(self, args):
         self.args = args
         self.device = torch.device("cuda" if torch.cuda.is_available() and args.cuda  else "cpu")
         self.style_model = self.load_model(args.model)
-        
+    @st.cache
     def load_model(self, model_path:str):
         try:
+            if check_model_exists(model_path):
             # Load Pytorch model if .pth file
-            if model_path.endswith(".pth"):
-                logging.info("Loadig pytorch model from %s", model_path)
-                style_model = TransformerNet()
-                state_dict = torch.load(model_path)
-                for k in list(state_dict.keys()):
-                    if re.search(r'in\d+\.running_(mean|var)$', k):
-                        del state_dict[k]
-                style_model.load_state_dict(state_dict)
-                style_model.to(self.device)
-                style_model.eval()
-                return style_model
-            
-            # Load ONNX model if .onnx file
-            elif model_path.endswith(".onnx"):
-                logging.info("Loading ONNX model from %s", model_path)
-                assert not self.args.export_onnx
-                model = onnx.load(self.args.model)
-                prepared_backend = onnx_caffe2.backend.prepare(model, device='CUDA' if self.args.cuda else 'CPU')
-                return prepared_backend
+                if model_path.endswith(".pth"):
+                    logging.info("Loadig pytorch model from %s", model_path)
+                    style_model = TransformerNet()
+                    state_dict = torch.load(model_path)
+                    for k in list(state_dict.keys()):
+                        if re.search(r'in\d+\.running_(mean|var)$', k):
+                            del state_dict[k]
+                    style_model.load_state_dict(state_dict)
+                    style_model.to(self.device)
+                    style_model.eval()
+                    return style_model
+
+                # Load ONNX model if .onnx file
+                elif model_path.endswith(".onnx"):
+                    logging.info("Loading ONNX model from %s", model_path)
+                    assert not self.args.export_onnx
+                    model = onnx.load(self.args.model)
+                    prepared_backend = onnx_caffe2.backend.prepare(model, device='CUDA' if self.args.cuda else 'CPU')
+                    return [prepared_backend, model]
+                else:
+                    raise CustomException("Invalid model file format. Supported formats: .pth(PyTorch) or .onnx(Caffe2)", None)
             else:
-                raise CustomException("Invalid model file format. Supported formats: .pth(PyTorch) or .onnx(Caffe2)", None)
+                raise CustomException("Model is not saved at %s", model_path, '')
+
         except Exception as e:
             logging.info(e)
             raise CustomException(e,sys)
-    
+    @st.cache
     def stylize(self, content_image_path:str, output_image_path:str):
-        
+        logging.info("Stylizing Image: %s", content_image_path)
+        try: 
+            content_image = load_image(content_image_path, scale = self.args.content_scale)
+            content_transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Lambda(lambda x: x.mul(255))
+            ])
+            content_image = content_transform(content_image)
+            content_image = content_image.unsqueeze(0).to(self.device)
+
+            if self.args.model.endswith(".onnx"):
+                backend, model = self.style_model[0], self.style_model[1]
+                inp = {model.graph.input[0].name: content_image.numpy()}
+                output = backend.run(inp)[0]
+            else:
+                with torch.no_grad():
+                    output = self.style_model(content_image).cpu()
+            save_image(output_image_path, output[0])
+        except Exception as e:
+            logging.info("Failed to Stylize Image")
+            raise CustomException(e,sys)
+
+
