@@ -61,8 +61,8 @@ Below are some examples of stylized images created using the Style Transfer mode
 **Style-Image**
 - Amber Style
 ![style-image](artifacts/outputs/mosaic-amber.jpg)
-- Udnie Style
-![style-image](artifacts/outputs/udnie-cat.jpg)
+- Rain Princess Style
+![style-image](artifacts/outputs/rain_princess-cat.png)
 
 ## Contribution
 This project is open source and welcomes any contribution to fine-tune the model or improve the user experience. You can fork this repository and submit a pull request with your changes. Please follow the code style and documentation guidelines.
