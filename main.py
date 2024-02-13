@@ -1,20 +1,12 @@
-import argparse
-import os
-import sys
-import time
 import re
 
 import numpy as np
 import torch
-from torch.optim import Adam
-from torch.utils.data import DataLoader
-from torchvision import datasets
 from torchvision import transforms
 import torch.onnx
 
 import src.utils as utils
 from src.components.transformer_net import TransformerNet
-from src.components.vgg import Vgg16
 import streamlit as st
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

@@ -1,6 +1,5 @@
 import os
 import sys
-import torch
 from PIL import Image
 from src.exception import CustomException
 from src.logger import logging

@@ -28,7 +28,7 @@ To train the style transfer model, use the following command:
 
 ```bash
 python main.py train --dataset <path_to_dataset> --style-image <path_to_style_image> --save-model-dir <path_to_save_model>
-
+```
 
 - **--dataset**: Path to the training dataset directory.
 - **--style-image**: Path to the style image to transfer.
@@ -36,13 +36,40 @@ python main.py train --dataset <path_to_dataset> --style-image <path_to_style_im
 
 
 ### Stylizing Images
+**(Through Command Line)**
 To stylize images using a trained model, use the following command:
 
-'''bash
+```bash
 python main.py eval --content-image <path_to_content_image> --output-image <output_image_path> --model <path_to_model>
-
+```
 - **--content-image**: Path to the content image to stylize.
 - **--output-image**: Path to save the stylized output image.
 - **--model**: Path to the trained model('.pth' or '.onxx' format)
+**(Through StreamLine)**
+To stylize image using a web interface with downloaded model, use the following command:
+```bash
+streamlit run app.py
+```
 
 ## Examples
+Below are some examples of stylized images created using the Style Transfer model:
+
+**Content-Image**
+![content-image](artifacts/inputs/amber.jpg)
+![content-image](artifacts/inputs/cat.png)
+
+**Style-Image**
+- Amber Style
+![style-image](artifacts/outputs/mosaic-amber.jpg)
+- Udnie Style
+![style-image](artifacts/outputs/udnie-cat.jpg)
+
+## Contribution
+This project is open source and welcomes any contribution to fine-tune the model or improve the user experience. You can fork this repository and submit a pull request with your changes. Please follow the code style and documentation guidelines.
+
+## 🔗 Links
+
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/tushaar9560/)
+[![instagram](https://img.shields.io/badge/instagram-d62976?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/itstushaar1/)
+[![telegram](https://img.shields.io/badge/telegram-0088cc?style=for-the-badge&logo=telegram&logoColor=white)](https://telegram.com/itstushaar1/)
+[![email](https://img.shields.io/badge/email-0088cc?style=for-the-badge&logo=gmail&logoColor=white)](mailto:tushaar.sharma05@gmail.com)
