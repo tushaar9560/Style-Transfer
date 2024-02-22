@@ -20,10 +20,10 @@ def get_packages(file_path: str) -> List[str]:
 
 
 setup(
-    name='onepieceqna',
+    name='style-transfer',
     version='0.0.1',
-    author='Subodh',
-    author_email='s.subodh7976@gmail.com',
+    author='Tushaar',
+    author_email='tushaar.sharma05@gmail.com',
     packages=find_packages(),
     install_requires=get_packages('requirements.txt')
 )
